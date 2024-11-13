@@ -7,6 +7,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -170,6 +174,15 @@ void drawRectangle(GLFWwindow* window)
 
         // Draw the triangle.
         shader.use();
+
+        // Transform.
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        // Send to the shader.
+        unsigned int transform_loc = glGetUniformLocation(shader.shader_program, "transform");
+        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
+
         // Because this code only draw one triangle, so we don't need to bind vertex array object every time.
         //glBindVertexArray(vertex_array_object);
         //glDrawArrays(GL_TRIANGLES, 0, 3);

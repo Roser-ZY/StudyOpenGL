@@ -6,9 +6,11 @@ layout (location = 2) in vec2 aTexCoord;
 out vec3 ourColor;                              // 为片段着色器指定一个颜色输出
 out vec2 texCoord;
 
+uniform mat4 transform;
+
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);              // 注意我们如何把一个vec3作为vec4的构造器的参数
+    gl_Position = transform * vec4(aPos, 1.0);
     ourColor = aColor;
-    texCoord = aTexCoord;
+    texCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
 }
