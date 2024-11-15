@@ -46,5 +46,11 @@
     <None Include="shader.vs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="box_shader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="box_shader.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
