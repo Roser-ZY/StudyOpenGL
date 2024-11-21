@@ -11,10 +11,27 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
+static glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
+static glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
+static glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
+static float deltaTime = 0.0f;  // 当前帧与上一帧的时间差
+static float lastFrame = 0.0f;  // 上一帧的时间
+
 void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    float camera_speed = 2.5f * deltaTime;  // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera_pos += camera_speed * camera_front;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera_pos -= camera_speed * camera_front;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
 }
 
 unsigned int bindVertexArrayObject()
@@ -284,7 +301,7 @@ void drawBox(GLFWwindow* window)
     shader.setInt("texture2", 1);
 
     // Coordinate.
-    glm::vec3 cubePositions[] = {
+    glm::vec3 cube_positions[] = {
       glm::vec3( 0.0f,  0.0f,  0.0f), 
       glm::vec3( 2.0f,  5.0f, -15.0f), 
       glm::vec3(-1.5f, -2.2f, -2.5f),  
@@ -297,12 +314,8 @@ void drawBox(GLFWwindow* window)
       glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
 
-    glm::mat4 view(1.0f);
-    view = glm::translate(view, glm::vec3(-1.0f, -1.0f, -3.0f));
     glm::mat4 projection(1.0f);
     projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 10.0f);
-
-    shader.setMat4("view", view);
     shader.setMat4("projection", projection);
 
     //// Wireframe mode.
@@ -316,14 +329,22 @@ void drawBox(GLFWwindow* window)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         processInput(window);
 
         // Draw the triangle.
         shader.use();
 
+        // Camera.
+        glm::mat4 view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
+        shader.setMat4("view", view);
+
         for (unsigned int i = 0; i < 10; ++i) {
             glm::mat4 model(1.0f);
-            model = glm::translate(model, cubePositions[i]);
+            model = glm::translate(model, cube_positions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.5f, 1.0f, 0.0f));
