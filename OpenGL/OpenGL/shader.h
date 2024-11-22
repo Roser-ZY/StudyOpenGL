@@ -12,7 +12,7 @@
 
 class Shader {
 public:
-    unsigned int shader_program;
+    unsigned int shader_program_;
 
     Shader(const char* vertexPath, const char* fragmentPath);
     ~Shader();
