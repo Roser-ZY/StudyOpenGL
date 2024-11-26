@@ -1,8 +1,9 @@
-#include <iostream>
+#include "camera.h"
 #include "glad/glad.h"
-#include <GLFW/glfw3.h>
-
 #include "shader.h"
+
+#include <GLFW/glfw3.h>
+#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -11,27 +12,50 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-static glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
-static glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
-static glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
-static float deltaTime = 0.0f;  // 当前帧与上一帧的时间差
-static float lastFrame = 0.0f;  // 上一帧的时间
+static Camera camera;
+static float delta_time = 0.0f;  // 当前帧与上一帧的时间差
+static float last_frame = 0.0f;  // 上一帧的时间
 
-void processInput(GLFWwindow* window)
+void processKeyboard(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    float camera_speed = 2.5f * deltaTime;  // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera_pos += camera_speed * camera_front;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera_pos -= camera_speed * camera_front;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera_pos -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera_pos += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::FORWARD, delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::BACKWARD, delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::LEFT, delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::RIGHT, delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::UP, delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        camera.processKeyboard(CameraMovement::DOWN, delta_time);
+    }
+}
+
+void processMouseMovement(GLFWwindow* window, double xpos, double ypos)
+{
+    static float lastX = 400;
+    static float lastY = 300;
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;       // The window coordinate is reversed with graphics.
+    lastX = xpos;
+    lastY = ypos;
+    camera.processMouseMovement(xoffset, yoffset, true);
+}
+
+void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.processMouseScroll(yoffset);
 }
 
 unsigned int bindVertexArrayObject()
@@ -114,12 +138,12 @@ void drawTriangle(GLFWwindow* window, float vertices[], unsigned int vertice_siz
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        processInput(window);
+        processKeyboard(window);
 
         // Draw the triangle.
         shader.use();
         // Because this code only draw one triangle, so we don't need to bind vertex array object every time.
-        //glBindVertexArray(vertex_array_object);
+        // glBindVertexArray(vertex_array_object);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
@@ -156,8 +180,10 @@ void drawRectangle(GLFWwindow* window)
     unsigned int element_buffer_object = bindElementBufferObject(indices, sizeof(indices));
 
     // Texture.
-    unsigned int texture1 = generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0, GL_RGB);
-    unsigned int texture2 = generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1, GL_RGBA);
+    unsigned int texture1 =
+        generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0, GL_RGB);
+    unsigned int texture2 =
+        generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1, GL_RGBA);
 
     // Attributes.
     // Vertex positions.
@@ -194,7 +220,7 @@ void drawRectangle(GLFWwindow* window)
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     //// Wireframe mode.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
@@ -202,7 +228,7 @@ void drawRectangle(GLFWwindow* window)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        processInput(window);
+        processKeyboard(window);
 
         // Draw the triangle.
         shader.use();
@@ -229,48 +255,23 @@ void drawBox(GLFWwindow* window)
 {
     float vertices[] = {
         //      位置              纹理
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+        0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+        0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
+        -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
 
     // Vertex array object.
     unsigned int vertex_array_object = bindVertexArrayObject();
@@ -301,18 +302,11 @@ void drawBox(GLFWwindow* window)
     shader.setInt("texture2", 1);
 
     // Coordinate.
-    glm::vec3 cube_positions[] = {
-      glm::vec3( 0.0f,  0.0f,  0.0f), 
-      glm::vec3( 2.0f,  5.0f, -15.0f), 
-      glm::vec3(-1.5f, -2.2f, -2.5f),  
-      glm::vec3(-3.8f, -2.0f, -12.3f),  
-      glm::vec3( 2.4f, -0.4f, -3.5f),  
-      glm::vec3(-1.7f,  3.0f, -7.5f),  
-      glm::vec3( 1.3f, -2.0f, -2.5f),  
-      glm::vec3( 1.5f,  2.0f, -2.5f), 
-      glm::vec3( 1.5f,  0.2f, -1.5f), 
-      glm::vec3(-1.3f,  1.0f, -1.5f)  
-    };
+    glm::vec3 cube_positions[] = {glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
+                                  glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+                                  glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
+                                  glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
+                                  glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     glm::mat4 projection(1.0f);
     projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 10.0f);
@@ -322,6 +316,12 @@ void drawBox(GLFWwindow* window)
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glEnable(GL_DEPTH_TEST);
+    // Capture the mouse in the window.
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // Set call back function to process mouse movement.
+    glfwSetCursorPosCallback(window, processMouseMovement);
+    // Set call back function to process mouse scroll.
+    glfwSetScrollCallback(window, processMouseScroll);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
@@ -329,19 +329,16 @@ void drawBox(GLFWwindow* window)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        float current_frame = glfwGetTime();
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
 
-        processInput(window);
+        processKeyboard(window);
 
         // Draw the triangle.
         shader.use();
 
-        // Camera.
-        glm::mat4 view = glm::lookAt(camera_pos, camera_pos + camera_front, camera_up);
-        shader.setMat4("view", view);
-
+        // Rotate boxes.
         for (unsigned int i = 0; i < 10; ++i) {
             glm::mat4 model(1.0f);
             model = glm::translate(model, cube_positions[i]);
@@ -351,6 +348,10 @@ void drawBox(GLFWwindow* window)
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+        // Camera.
+        glm::mat4 view = camera.getViewMatrix();
+        shader.setMat4("view", view);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -390,8 +391,8 @@ int main(void)
         return -1;
     }
 
-    //float vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
-    //drawTriangle(window, vertices, sizeof(vertices));
+    // float vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+    // drawTriangle(window, vertices, sizeof(vertices));
 
     drawBox(window);
 

@@ -21,14 +21,24 @@ Camera::Camera(float pos_x, float pos_y, float pos_z, float up_x, float up_y, fl
 void Camera::processKeyboard(CameraMovement direction, float delta_time)
 {
     float velocity = movement_speed_ * delta_time;
-    if (direction == FORWARD)
+    if (direction == FORWARD) {
         position_ += front_ * velocity;
-    if (direction == BACKWARD)
+    }
+    if (direction == BACKWARD) {
         position_ -= front_ * velocity;
-    if (direction == LEFT)
+    }
+    if (direction == LEFT) {
         position_ -= right_ * velocity;
-    if (direction == RIGHT)
+    }
+    if (direction == RIGHT) {
         position_ += right_ * velocity;
+    }
+    if (direction == UP) {
+        position_ += world_up_ * velocity;
+    }
+    if (direction == DOWN) {
+        position_ -= world_up_ * velocity;
+    }
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrain_pitch)

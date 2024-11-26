@@ -134,12 +134,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="applicaiton.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
