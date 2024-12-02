@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="applicaiton.cpp" />
+    <ClCompile Include="application.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="shader.cpp" />
@@ -144,6 +144,8 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="box_shader.fs" />
+    <None Include="box_shader.vs" />
     <None Include="box_shader.fs" />
     <None Include="box_shader.vs" />
     <None Include="shader.fs" />

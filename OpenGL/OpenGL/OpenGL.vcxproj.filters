@@ -13,9 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="资源文件\getting_started">
+      <UniqueIdentifier>{ec3cb28f-e82c-4b0e-b639-f69d17b11cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\lighting">
+      <UniqueIdentifier>{395134d5-b078-425c-8752-cf5cda522be4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="applicaiton.cpp">
+    <ClCompile Include="application.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="glad\src\glad.c">
@@ -24,33 +30,39 @@
     <ClCompile Include="shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="shader.vs">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="box_shader.fs">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\getting_started</Filter>
     </None>
     <None Include="box_shader.vs">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="shader.fs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="shader.vs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="box_shader.vs">
+      <Filter>资源文件\lighting</Filter>
+    </None>
+    <None Include="box_shader.fs">
+      <Filter>资源文件\lighting</Filter>
     </None>
   </ItemGroup>
 </Project>
