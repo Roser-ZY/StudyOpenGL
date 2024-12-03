@@ -46,22 +46,31 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="box_shader.fs">
-      <Filter>资源文件\getting_started</Filter>
-    </None>
-    <None Include="box_shader.vs">
-      <Filter>资源文件\getting_started</Filter>
-    </None>
-    <None Include="shader.fs">
-      <Filter>资源文件\getting_started</Filter>
-    </None>
-    <None Include="shader.vs">
-      <Filter>资源文件\getting_started</Filter>
-    </None>
     <None Include="box_shader.vs">
       <Filter>资源文件\lighting</Filter>
     </None>
     <None Include="box_shader.fs">
+      <Filter>资源文件\lighting</Filter>
+    </None>
+    <None Include="getting_started\box_shader.fs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="getting_started\box_shader.vs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="getting_started\shader.fs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="getting_started\shader.vs">
+      <Filter>资源文件\getting_started</Filter>
+    </None>
+    <None Include="lighting\box_shader.fs">
+      <Filter>资源文件\lighting</Filter>
+    </None>
+    <None Include="lighting\box_shader.vs">
+      <Filter>资源文件\lighting</Filter>
+    </None>
+    <None Include="lighting\lamp_shader.fs">
       <Filter>资源文件\lighting</Filter>
     </None>
   </ItemGroup>

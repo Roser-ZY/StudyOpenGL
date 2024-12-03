@@ -396,13 +396,7 @@ namespace Lighting {
         unsigned int light_vao = bindVertexArrayObject();
         // Box vertex buffer object.
         // The light and the box use the same vbo because they have same shape(box).
-        unsigned int box_vbo = bindVertexBufferObject(vertices, sizeof(vertices));
-
-        // Attributes.
-        // Vertex positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
+        unsigned int vbo = bindVertexBufferObject(vertices, sizeof(vertices));
 
         // Attributes.
         // Vertex positions.
@@ -410,16 +404,26 @@ namespace Lighting {
         glEnableVertexAttribArray(0);
 
         // Compile.
-        Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/box_shader.vs",
-                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/box_shader.fs");
-
-        shader.use();
+        Shader box_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
+                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.fs");
+        Shader cube_lamp_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
+                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/lamp_shader.fs");
 
         glm::mat4 model(1.0f);
-        shader.setMat4("model", model);
         glm::mat4 projection(1.0f);
         projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 10.0f);
-        shader.setMat4("projection", projection);
+
+        box_shader.use();
+        box_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        box_shader.setMat4("model", model);
+        box_shader.setMat4("projection", projection);
+
+        cube_lamp_shader.use();
+        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+        cube_lamp_shader.setMat4("model", model);
 
         glEnable(GL_DEPTH_TEST);
         //// Capture the mouse in the window.
@@ -441,14 +445,24 @@ namespace Lighting {
 
             processKeyboard(window);
 
-            // Draw the triangle.
-            shader.use();
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
-            shader.setMat4("view", view);
+
+            // Use the box shader.
+            box_shader.use();
+            // Set the view matrix.
+            box_shader.setMat4("view", view);
+            // Draw the box.
+            glBindVertexArray(box_vao);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            // Use the lamp shader.
+            cube_lamp_shader.use();
+            // Set the view matrix.
+            cube_lamp_shader.setMat4("view", view);
+            // Draw the lamp.
+            glBindVertexArray(light_vao);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -459,7 +473,8 @@ namespace Lighting {
 
         // Optianl, de-allocate all resource once ther've outlived their purpose.
         glDeleteVertexArrays(1, &box_vao);
-        glDeleteBuffers(1, &box_vbo);
+        glDeleteVertexArrays(1, &light_vao);
+        glDeleteBuffers(1, &vbo);
     }
 }  // namespace Lighting
 

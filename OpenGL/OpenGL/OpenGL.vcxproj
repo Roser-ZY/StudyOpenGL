@@ -144,12 +144,13 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="box_shader.fs" />
-    <None Include="box_shader.vs" />
-    <None Include="box_shader.fs" />
-    <None Include="box_shader.vs" />
-    <None Include="shader.fs" />
-    <None Include="shader.vs" />
+    <None Include="getting_started\box_shader.fs" />
+    <None Include="getting_started\box_shader.vs" />
+    <None Include="getting_started\shader.fs" />
+    <None Include="getting_started\shader.vs" />
+    <None Include="lighting\box_shader.fs" />
+    <None Include="lighting\box_shader.vs" />
+    <None Include="lighting\lamp_shader.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
