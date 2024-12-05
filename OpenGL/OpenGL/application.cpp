@@ -372,50 +372,82 @@ namespace GettingStarted {
 namespace Lighting {
     void drawBox(GLFWwindow* window)
     {
-        float vertices[] = {-0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f,
-                            0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f,
+        float vertices[] = {
+            -0.5f, -0.5f, -0.5f, 
+             0.5f, -0.5f, -0.5f,  
+             0.5f,  0.5f, -0.5f,  
+             0.5f,  0.5f, -0.5f,  
+            -0.5f,  0.5f, -0.5f, 
+            -0.5f, -0.5f, -0.5f, 
 
-                            -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,
-                            0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,
+            -0.5f, -0.5f,  0.5f, 
+             0.5f, -0.5f,  0.5f,  
+             0.5f,  0.5f,  0.5f,  
+             0.5f,  0.5f,  0.5f,  
+            -0.5f,  0.5f,  0.5f, 
+            -0.5f, -0.5f,  0.5f, 
 
-                            -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f,
-                            -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f, 
+            -0.5f,  0.5f, -0.5f, 
+            -0.5f, -0.5f, -0.5f, 
+            -0.5f, -0.5f, -0.5f, 
+            -0.5f, -0.5f,  0.5f, 
+            -0.5f,  0.5f,  0.5f, 
 
-                            0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f,
-                            0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,  
+             0.5f,  0.5f, -0.5f,  
+             0.5f, -0.5f, -0.5f,  
+             0.5f, -0.5f, -0.5f,  
+             0.5f, -0.5f,  0.5f,  
+             0.5f,  0.5f,  0.5f,  
 
-                            -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,
-                            0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f, 
+             0.5f, -0.5f, -0.5f,  
+             0.5f, -0.5f,  0.5f,  
+             0.5f, -0.5f,  0.5f,  
+            -0.5f, -0.5f,  0.5f, 
+            -0.5f, -0.5f, -0.5f, 
 
-                            -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
-                            0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f};
+            -0.5f,  0.5f, -0.5f, 
+             0.5f,  0.5f, -0.5f,  
+             0.5f,  0.5f,  0.5f,  
+             0.5f,  0.5f,  0.5f,  
+            -0.5f,  0.5f,  0.5f, 
+            -0.5f,  0.5f, -0.5f
+        };
 
-        // Box vertex array object.
-        unsigned int box_vao = bindVertexArrayObject();
-        // Light vertex array object.
-        unsigned int light_vao = bindVertexArrayObject();
         // Box vertex buffer object.
         // The light and the box use the same vbo because they have same shape(box).
         unsigned int vbo = bindVertexBufferObject(vertices, sizeof(vertices));
 
+        // Box vertex array object.
+        unsigned int box_vao = bindVertexArrayObject();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         // Attributes.
         // Vertex positions.
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
+        // Light vertex array object.
+        unsigned int light_vao = bindVertexArrayObject();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        // Attributes.
+        // Vertex positions.
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+
         // Compile.
         Shader box_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
                       "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.fs");
-        Shader cube_lamp_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
+        Shader cube_lamp_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/lamp_shader.vs",
                            "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/lamp_shader.fs");
 
         glm::mat4 model(1.0f);
         glm::mat4 projection(1.0f);
-        projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 10.0f);
+        projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 500.0f);
 
         box_shader.use();
-        box_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         box_shader.setMat4("model", model);
         box_shader.setMat4("projection", projection);
 
@@ -424,14 +456,15 @@ namespace Lighting {
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         cube_lamp_shader.setMat4("model", model);
+        cube_lamp_shader.setMat4("projection", projection);
 
         glEnable(GL_DEPTH_TEST);
-        //// Capture the mouse in the window.
-        // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        //// Set call back function to process mouse movement.
-        // glfwSetCursorPosCallback(window, processMouseMovement);
-        //// Set call back function to process mouse scroll.
-        // glfwSetScrollCallback(window, processMouseScroll);
+        // Capture the mouse in the window.
+         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set call back function to process mouse movement.
+         glfwSetCursorPosCallback(window, processMouseMovement);
+        // Set call back function to process mouse scroll.
+         glfwSetScrollCallback(window, processMouseScroll);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -450,6 +483,9 @@ namespace Lighting {
 
             // Use the box shader.
             box_shader.use();
+            // Set colors.
+            box_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+            box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
             // Draw the box.
