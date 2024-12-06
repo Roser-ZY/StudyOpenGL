@@ -151,6 +151,7 @@
     <None Include="lighting\box_shader.fs" />
     <None Include="lighting\box_shader.vs" />
     <None Include="lighting\lamp_shader.fs" />
+    <None Include="lighting\lamp_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

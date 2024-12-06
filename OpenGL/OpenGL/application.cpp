@@ -373,47 +373,48 @@ namespace Lighting {
     void drawBox(GLFWwindow* window)
     {
         float vertices[] = {
-            -0.5f, -0.5f, -0.5f, 
-             0.5f, -0.5f, -0.5f,  
-             0.5f,  0.5f, -0.5f,  
-             0.5f,  0.5f, -0.5f,  
-            -0.5f,  0.5f, -0.5f, 
-            -0.5f, -0.5f, -0.5f, 
+        //      位置                 法向量
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-            -0.5f, -0.5f,  0.5f, 
-             0.5f, -0.5f,  0.5f,  
-             0.5f,  0.5f,  0.5f,  
-             0.5f,  0.5f,  0.5f,  
-            -0.5f,  0.5f,  0.5f, 
-            -0.5f, -0.5f,  0.5f, 
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-            -0.5f,  0.5f,  0.5f, 
-            -0.5f,  0.5f, -0.5f, 
-            -0.5f, -0.5f, -0.5f, 
-            -0.5f, -0.5f, -0.5f, 
-            -0.5f, -0.5f,  0.5f, 
-            -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-             0.5f,  0.5f,  0.5f,  
-             0.5f,  0.5f, -0.5f,  
-             0.5f, -0.5f, -0.5f,  
-             0.5f, -0.5f, -0.5f,  
-             0.5f, -0.5f,  0.5f,  
-             0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f, 
-             0.5f, -0.5f, -0.5f,  
-             0.5f, -0.5f,  0.5f,  
-             0.5f, -0.5f,  0.5f,  
-            -0.5f, -0.5f,  0.5f, 
-            -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-            -0.5f,  0.5f, -0.5f, 
-             0.5f,  0.5f, -0.5f,  
-             0.5f,  0.5f,  0.5f,  
-             0.5f,  0.5f,  0.5f,  
-            -0.5f,  0.5f,  0.5f, 
-            -0.5f,  0.5f, -0.5f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
 
         // Box vertex buffer object.
@@ -425,15 +426,18 @@ namespace Lighting {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         // Attributes.
         // Vertex positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
+        // Normals.
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
         // Light vertex array object.
         unsigned int light_vao = bindVertexArrayObject();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         // Attributes.
         // Vertex positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
 
@@ -446,13 +450,14 @@ namespace Lighting {
         glm::mat4 model(1.0f);
         glm::mat4 projection(1.0f);
         projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 500.0f);
+        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
         box_shader.use();
         box_shader.setMat4("model", model);
         box_shader.setMat4("projection", projection);
+        box_shader.setVec3("lightPos", lightPos);
 
         cube_lamp_shader.use();
-        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         cube_lamp_shader.setMat4("model", model);
@@ -469,7 +474,7 @@ namespace Lighting {
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             float current_frame = glfwGetTime();
