@@ -13,5 +13,6 @@ void main()
 {
 	gl_Position = projection * view * model * vec4(iPosition, 1.0);
 	FragPos = vec3(model * vec4(iPosition, 1.0));
-	Normal = iNormal;
+	// 消除不等比缩放对法向量的影响
+	Normal = mat3(transpose(inverse(model))) * iNormal;
 }

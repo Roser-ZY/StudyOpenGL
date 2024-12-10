@@ -493,6 +493,7 @@ namespace Lighting {
             box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
+            box_shader.setVec3("viewPos", camera.position_);
             // Draw the box.
             glBindVertexArray(box_vao);
             glDrawArrays(GL_TRIANGLES, 0, 36);
