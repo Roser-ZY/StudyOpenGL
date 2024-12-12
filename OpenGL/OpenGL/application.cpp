@@ -478,8 +478,8 @@ namespace Lighting {
             processKeyboard(window);
 
             // Rotate light.
-            lightPos.x = 2.0f * sin(current_frame) + 1.0f;
-            lightPos.y = sin(current_frame / 2.0f);
+            //lightPos.x = 2.0f * sin(current_frame) + 1.0f;
+            //lightPos.y = sin(current_frame / 2.0f);
 
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
@@ -488,14 +488,19 @@ namespace Lighting {
             box_shader.use();
             box_shader.setMat4("model", model);
             box_shader.setMat4("projection", projection);
-            // Set colors.
-            box_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-            box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+            // Set materials.
+            box_shader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+            box_shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+            box_shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+            box_shader.setFloat("material.shininess", 32.0f);
+            // Set lights.
+            box_shader.setVec3("light.position", lightPos);
+            box_shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+            box_shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+            box_shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
             box_shader.setVec3("viewPos", camera.position_);
-            // Set light position.
-            box_shader.setVec3("lightPos", lightPos);
             // Draw the box.
             glBindVertexArray(box_vao);
             glDrawArrays(GL_TRIANGLES, 0, 36);
