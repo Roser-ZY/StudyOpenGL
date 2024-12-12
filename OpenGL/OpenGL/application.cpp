@@ -44,12 +44,18 @@ void processKeyboard(GLFWwindow* window)
 
 void processMouseMovement(GLFWwindow* window, double xpos, double ypos)
 {
-    static float lastX = 400;
-    static float lastY = 300;
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;       // The window coordinate is reversed with graphics.
-    lastX = xpos;
-    lastY = ypos;
+    static bool first_mouse_movement = true;
+    static float last_x = 400;
+    static float last_y = 300;
+    if (first_mouse_movement) {
+        last_x = xpos;
+        last_y = ypos;
+        first_mouse_movement = false;
+    }
+    float xoffset = xpos - last_x;
+    float yoffset = last_y - ypos;  // The window coordinate is reversed with graphics.
+    last_x = xpos;
+    last_y = ypos;
     camera.processMouseMovement(xoffset, yoffset, true);
 }
 
@@ -370,6 +376,7 @@ namespace GettingStarted {
 
 // Lighting
 namespace Lighting {
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
     void drawBox(GLFWwindow* window)
     {
         float vertices[] = {
@@ -447,21 +454,8 @@ namespace Lighting {
         Shader cube_lamp_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/lamp_shader.vs",
                            "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/lamp_shader.fs");
 
-        glm::mat4 model(1.0f);
         glm::mat4 projection(1.0f);
         projection = glm::perspective(glm::radians(60.0f), (float)(640.0 / 480.0), 0.1f, 500.0f);
-        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
-        box_shader.use();
-        box_shader.setMat4("model", model);
-        box_shader.setMat4("projection", projection);
-        box_shader.setVec3("lightPos", lightPos);
-
-        cube_lamp_shader.use();
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f));
-        cube_lamp_shader.setMat4("model", model);
-        cube_lamp_shader.setMat4("projection", projection);
 
         glEnable(GL_DEPTH_TEST);
         // Capture the mouse in the window.
@@ -483,23 +477,35 @@ namespace Lighting {
 
             processKeyboard(window);
 
+            // Rotate light.
+            lightPos.x = 2.0f * sin(current_frame) + 1.0f;
+            lightPos.y = sin(current_frame / 2.0f);
+
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
-
+            glm::mat4 model(1.0f);
             // Use the box shader.
             box_shader.use();
+            box_shader.setMat4("model", model);
+            box_shader.setMat4("projection", projection);
             // Set colors.
             box_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
             box_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
             box_shader.setVec3("viewPos", camera.position_);
+            // Set light position.
+            box_shader.setVec3("lightPos", lightPos);
             // Draw the box.
             glBindVertexArray(box_vao);
             glDrawArrays(GL_TRIANGLES, 0, 36);
 
             // Use the lamp shader.
             cube_lamp_shader.use();
+            model = glm::translate(model, lightPos);
+            model = glm::scale(model, glm::vec3(0.2f));
+            cube_lamp_shader.setMat4("model", model);
+            cube_lamp_shader.setMat4("projection", projection);
             // Set the view matrix.
             cube_lamp_shader.setMat4("view", view);
             // Draw the lamp.
