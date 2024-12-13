@@ -459,12 +459,13 @@ namespace Lighting {
 
         glEnable(GL_DEPTH_TEST);
         // Capture the mouse in the window.
-         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         // Set call back function to process mouse movement.
-         glfwSetCursorPosCallback(window, processMouseMovement);
+        glfwSetCursorPosCallback(window, processMouseMovement);
         // Set call back function to process mouse scroll.
-         glfwSetScrollCallback(window, processMouseScroll);
+        glfwSetScrollCallback(window, processMouseScroll);
 
+        bool first_set = true;
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
@@ -481,6 +482,15 @@ namespace Lighting {
             //lightPos.x = 2.0f * sin(current_frame) + 1.0f;
             //lightPos.y = sin(current_frame / 2.0f);
 
+            // Change color.
+            glm::vec3 lightColor;
+            lightColor.x = sin(current_frame * 2.0f);
+            lightColor.y = sin(current_frame * 0.7f);
+            lightColor.z = sin(current_frame * 1.3f);
+
+            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);    // 降低影响
+            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);  // 很低的影响
+
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
             glm::mat4 model(1.0f);
@@ -495,15 +505,20 @@ namespace Lighting {
             box_shader.setFloat("material.shininess", 32.0f);
             // Set lights.
             box_shader.setVec3("light.position", lightPos);
-            box_shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-            box_shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+            box_shader.setVec3("light.ambient", ambientColor);
+            box_shader.setVec3("light.diffuse", diffuseColor);
             box_shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
             box_shader.setVec3("viewPos", camera.position_);
+
             // Draw the box.
             glBindVertexArray(box_vao);
             glDrawArrays(GL_TRIANGLES, 0, 36);
+            int err = glGetError();
+            if (err != 0) {
+                std::cout << err << std::endl;
+            }
 
             // Use the lamp shader.
             cube_lamp_shader.use();
