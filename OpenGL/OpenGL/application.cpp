@@ -376,52 +376,52 @@ namespace GettingStarted {
 
 // Lighting
 namespace Lighting {
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
     void drawBox(GLFWwindow* window)
     {
         float vertices[] = {
-        //      位置                 法向量
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            // positions          // normals           // texture coords
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
         };
 
         // Box vertex buffer object.
@@ -433,20 +433,28 @@ namespace Lighting {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         // Attributes.
         // Vertex positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
         // Normals.
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
+        // Texture coordinates.
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
 
         // Light vertex array object.
         unsigned int light_vao = bindVertexArrayObject();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         // Attributes.
         // Vertex positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
+        // Texture.
+        unsigned int diffuse_texture =
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2.png", GL_TEXTURE0, GL_RGBA);
+        unsigned int specular_texture =
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1, GL_RGBA);
 
         // Compile.
         Shader box_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
@@ -465,7 +473,12 @@ namespace Lighting {
         // Set call back function to process mouse scroll.
         glfwSetScrollCallback(window, processMouseScroll);
 
-        bool first_set = true;
+        // Use the box shader.
+        box_shader.use();
+        // Set textures.
+        box_shader.setInt("material.diffuse", 0);
+        box_shader.setInt("material.specular", 1);
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
@@ -478,35 +491,34 @@ namespace Lighting {
 
             processKeyboard(window);
 
-            // Rotate light.
+            //// Rotate light.
             //lightPos.x = 2.0f * sin(current_frame) + 1.0f;
             //lightPos.y = sin(current_frame / 2.0f);
 
-            // Change color.
-            glm::vec3 lightColor;
-            lightColor.x = sin(current_frame * 2.0f);
-            lightColor.y = sin(current_frame * 0.7f);
-            lightColor.z = sin(current_frame * 1.3f);
+            //// Change color.
+            //glm::vec3 lightColor;
+            //lightColor.x = sin(current_frame * 2.0f);
+            //lightColor.y = sin(current_frame * 0.7f);
+            //lightColor.z = sin(current_frame * 1.3f);
 
-            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);    // 降低影响
-            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);  // 很低的影响
+            //glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);    // 降低影响
+            //glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);  // 很低的影响
 
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
             glm::mat4 model(1.0f);
             // Use the box shader.
             box_shader.use();
+            // Set coordinates.
             box_shader.setMat4("model", model);
             box_shader.setMat4("projection", projection);
             // Set materials.
-            box_shader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-            box_shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
             box_shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-            box_shader.setFloat("material.shininess", 32.0f);
+            box_shader.setFloat("material.shininess", 64.0f);
             // Set lights.
-            box_shader.setVec3("light.position", lightPos);
-            box_shader.setVec3("light.ambient", ambientColor);
-            box_shader.setVec3("light.diffuse", diffuseColor);
+            box_shader.setVec3("light.position", light_pos);
+            box_shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+            box_shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
             box_shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
@@ -515,14 +527,10 @@ namespace Lighting {
             // Draw the box.
             glBindVertexArray(box_vao);
             glDrawArrays(GL_TRIANGLES, 0, 36);
-            int err = glGetError();
-            if (err != 0) {
-                std::cout << err << std::endl;
-            }
 
             // Use the lamp shader.
             cube_lamp_shader.use();
-            model = glm::translate(model, lightPos);
+            model = glm::translate(model, light_pos);
             model = glm::scale(model, glm::vec3(0.2f));
             cube_lamp_shader.setMat4("model", model);
             cube_lamp_shader.setMat4("projection", projection);
