@@ -424,6 +424,13 @@ namespace Lighting {
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
         };
 
+        // Coordinate.
+        glm::vec3 cube_positions[] = {glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
+                                      glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+                                      glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
+                                      glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
+                                      glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+
         // Box vertex buffer object.
         // The light and the box use the same vbo because they have same shape(box).
         unsigned int vbo = bindVertexBufferObject(vertices, sizeof(vertices));
@@ -455,8 +462,8 @@ namespace Lighting {
             generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2.png", GL_TEXTURE0, GL_RGBA);
         unsigned int specular_texture = generateTexture(
             "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1, GL_RGBA);
-        unsigned int emission_texture = generateTexture(
-            "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\matrix.jpg", GL_TEXTURE2, GL_RGB);
+        //unsigned int emission_texture = generateTexture(
+        //    "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\matrix.jpg", GL_TEXTURE2, GL_RGB);
 
         // Compile.
         Shader box_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
@@ -480,7 +487,12 @@ namespace Lighting {
         // Set textures.
         box_shader.setInt("material.diffuse", 0);
         box_shader.setInt("material.specular", 1);
-        box_shader.setInt("material.emission", 2);
+        //box_shader.setInt("material.emission", 2);
+
+        // Light damping.
+        box_shader.setFloat("light.conatant", 1.0f);
+        box_shader.setFloat("light.linear", 0.09f);
+        box_shader.setFloat("light.quadratic", 0.032f);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -513,7 +525,7 @@ namespace Lighting {
             // Use the box shader.
             box_shader.use();
             // Set coordinates.
-            box_shader.setMat4("model", model);
+            //box_shader.setMat4("model", model);
             box_shader.setMat4("projection", projection);
             // Set materials.
             box_shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -527,9 +539,18 @@ namespace Lighting {
             box_shader.setMat4("view", view);
             box_shader.setVec3("viewPos", camera.position_);
 
-            // Draw the box.
-            glBindVertexArray(box_vao);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            // Rotate boxes.
+            for (unsigned int i = 0; i < 10; ++i) {
+                glm::mat4 model(1.0f);
+                model = glm::translate(model, cube_positions[i]);
+                float angle = 20.0f * i;
+                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+                box_shader.setMat4("model", model);
+                // Draw the box.
+                glBindVertexArray(box_vao);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
 
             // Use the lamp shader.
             cube_lamp_shader.use();
