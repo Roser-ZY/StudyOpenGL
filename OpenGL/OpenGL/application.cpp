@@ -453,8 +453,10 @@ namespace Lighting {
         // Texture.
         unsigned int diffuse_texture =
             generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2.png", GL_TEXTURE0, GL_RGBA);
-        unsigned int specular_texture =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1, GL_RGBA);
+        unsigned int specular_texture = generateTexture(
+            "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1, GL_RGBA);
+        unsigned int emission_texture = generateTexture(
+            "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\matrix.jpg", GL_TEXTURE2, GL_RGB);
 
         // Compile.
         Shader box_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/lighting/box_shader.vs",
@@ -478,6 +480,7 @@ namespace Lighting {
         // Set textures.
         box_shader.setInt("material.diffuse", 0);
         box_shader.setInt("material.specular", 1);
+        box_shader.setInt("material.emission", 2);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
