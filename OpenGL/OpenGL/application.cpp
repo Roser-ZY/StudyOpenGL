@@ -489,6 +489,9 @@ namespace Lighting {
         box_shader.setInt("material.specular", 1);
         //box_shader.setInt("material.emission", 2);
 
+        // Light style.
+        box_shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        box_shader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
         // Light damping.
         box_shader.setFloat("light.conatant", 1.0f);
         box_shader.setFloat("light.linear", 0.09f);
@@ -531,7 +534,8 @@ namespace Lighting {
             box_shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             box_shader.setFloat("material.shininess", 64.0f);
             // Set lights.
-            box_shader.setVec3("light.position", light_pos);
+            box_shader.setVec3("light.position", camera.position_);
+            box_shader.setVec3("light.direction", camera.front_);
             box_shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
             box_shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
             box_shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
@@ -552,17 +556,17 @@ namespace Lighting {
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
 
-            // Use the lamp shader.
-            cube_lamp_shader.use();
-            model = glm::translate(model, light_pos);
-            model = glm::scale(model, glm::vec3(0.2f));
-            cube_lamp_shader.setMat4("model", model);
-            cube_lamp_shader.setMat4("projection", projection);
-            // Set the view matrix.
-            cube_lamp_shader.setMat4("view", view);
-            // Draw the lamp.
-            glBindVertexArray(light_vao);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            //// Use the lamp shader.
+            //cube_lamp_shader.use();
+            //model = glm::translate(model, light_pos);
+            //model = glm::scale(model, glm::vec3(0.2f));
+            //cube_lamp_shader.setMat4("model", model);
+            //cube_lamp_shader.setMat4("projection", projection);
+            //// Set the view matrix.
+            //cube_lamp_shader.setMat4("view", view);
+            //// Draw the lamp.
+            //glBindVertexArray(light_vao);
+            //glDrawArrays(GL_TRIANGLES, 0, 36);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
