@@ -431,6 +431,14 @@ namespace Lighting {
                                       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
                                       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+        // Point light positions.
+        glm::vec3 pointLightPositions[] = {
+            glm::vec3( 0.7f,  0.2f,  2.0f),
+            glm::vec3( 2.3f, -3.3f, -4.0f),
+            glm::vec3(-4.0f,  2.0f, -12.0f),
+            glm::vec3( 0.0f,  0.0f, -3.0f)
+        };
+
         // Box vertex buffer object.
         // The light and the box use the same vbo because they have same shape(box).
         unsigned int vbo = bindVertexBufferObject(vertices, sizeof(vertices));
@@ -489,13 +497,36 @@ namespace Lighting {
         box_shader.setInt("material.specular", 1);
         //box_shader.setInt("material.emission", 2);
 
-        // Light style.
-        box_shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-        box_shader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+        // Direction light.
+        box_shader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        box_shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        box_shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        box_shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // Point lights.
+        for (int i = 0; i < 4; ++i) {
+            std::string pointLightName = std::string("pointLights[") + (char)(i + '0') + ']';
+            box_shader.setVec3(pointLightName + ".position", pointLightPositions[i]);
+
+            box_shader.setVec3(pointLightName + ".ambient", 0.2f, 0.2f, 0.2f);
+            box_shader.setVec3(pointLightName + ".diffuse", 0.5f, 0.5f, 0.5f);
+            box_shader.setVec3(pointLightName + ".specular", 1.0f, 1.0f, 1.0f);
+
+            box_shader.setFloat(pointLightName + ".conatant", 1.0f);
+            box_shader.setFloat(pointLightName + ".linear", 0.09f);
+            box_shader.setFloat(pointLightName + ".quadratic", 0.032f);
+        }
+        // Spot light.
+        box_shader.setVec3("spotLight.basic.ambient", 0.0f, 0.0f, 0.0f);
+        box_shader.setVec3("spotLight.basic.diffuse", 1.0f, 1.0f, 1.0f);
+        box_shader.setVec3("spotLight.basic.specular", 1.0f, 1.0f, 1.0f);
+        box_shader.setFloat("spotLight.basic.constant", 1.0f);
+        box_shader.setFloat("spotLight.basic.linear", 0.09f);
+        box_shader.setFloat("spotLight.basic.quadratic", 0.032f);
+
+        box_shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        box_shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));   
+
         // Light damping.
-        box_shader.setFloat("light.conatant", 1.0f);
-        box_shader.setFloat("light.linear", 0.09f);
-        box_shader.setFloat("light.quadratic", 0.032f);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -533,15 +564,13 @@ namespace Lighting {
             // Set materials.
             box_shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             box_shader.setFloat("material.shininess", 64.0f);
-            // Set lights.
-            box_shader.setVec3("light.position", camera.position_);
-            box_shader.setVec3("light.direction", camera.front_);
-            box_shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-            box_shader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-            box_shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
             // Set the view matrix.
             box_shader.setMat4("view", view);
             box_shader.setVec3("viewPos", camera.position_);
+
+            // Set spot light coordinates.
+            box_shader.setVec3("spotLight.basic.position", camera.position_);
+            box_shader.setVec3("spotLight.direction", camera.front_);
 
             // Rotate boxes.
             for (unsigned int i = 0; i < 10; ++i) {
@@ -556,17 +585,21 @@ namespace Lighting {
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
 
-            //// Use the lamp shader.
-            //cube_lamp_shader.use();
-            //model = glm::translate(model, light_pos);
-            //model = glm::scale(model, glm::vec3(0.2f));
-            //cube_lamp_shader.setMat4("model", model);
-            //cube_lamp_shader.setMat4("projection", projection);
-            //// Set the view matrix.
-            //cube_lamp_shader.setMat4("view", view);
-            //// Draw the lamp.
-            //glBindVertexArray(light_vao);
-            //glDrawArrays(GL_TRIANGLES, 0, 36);
+            // Use the lamp shader.
+            cube_lamp_shader.use();
+            // Set the view matrix.
+            cube_lamp_shader.setMat4("view", view);
+            // Set the projection matrix.
+            cube_lamp_shader.setMat4("projection", projection);
+            for (int i = 0; i < 4; ++i) {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, pointLightPositions[i]);
+                model = glm::scale(model, glm::vec3(0.2f));
+                cube_lamp_shader.setMat4("model", model);
+                // Draw the lamp.
+                glBindVertexArray(light_vao);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
