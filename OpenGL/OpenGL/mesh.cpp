@@ -39,6 +39,25 @@ Mesh::Mesh(const vector<Vertex>& vertices, const vector<unsigned int>& indices, 
     setupMesh();
 }
 
+void Mesh::draw(Shader shader) {
+    unsigned int diffuseIdx = 0;
+    unsigned int specularIdx = 0;
+    for (unsigned int i = 0; i < textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        if (textures[i].type == "texture_diffuse") {
+            diffuseIdx++;
+        } else if (textures[i].type == "texture_specular") {
+            specularIdx++;
+        }
+        shader.setInt(("material." + textures[i].type + '[' + std::to_string(diffuseIdx) + ']'), i);
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    }
+
+    glBindVertexArray(vao);     // Bind VAO.
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);       // Remove VAO.
+}
+
 void Mesh::setupMesh()
 {
     // Initialize objects.
