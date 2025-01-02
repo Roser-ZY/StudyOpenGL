@@ -22,6 +22,7 @@ private:
 
     std::vector<Mesh> meshes_;
     std::string directory_;
+    std::vector<Texture> textures_loaded_;
 };
 
 #endif
