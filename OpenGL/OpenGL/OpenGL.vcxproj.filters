@@ -19,6 +19,9 @@
     <Filter Include="资源文件\lighting">
       <UniqueIdentifier>{395134d5-b078-425c-8752-cf5cda522be4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\model">
+      <UniqueIdentifier>{c6a372d1-440c-4828-8e98-bc871645cf48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp">
@@ -81,6 +84,12 @@
     </None>
     <None Include="lighting\lamp_shader.vs">
       <Filter>资源文件\lighting</Filter>
+    </None>
+    <None Include="model\model.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\model.vs">
+      <Filter>资源文件\model</Filter>
     </None>
   </ItemGroup>
 </Project>

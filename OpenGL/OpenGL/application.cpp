@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "glad/glad.h"
 #include "shader.h"
+#include "model.h"
 
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -593,8 +594,63 @@ namespace Lighting {
     }
 }  // namespace Lighting
 
-namespace Model {
-    
+namespace BasicModel {
+    void drawModel(GLFWwindow* window)
+    {
+        // Flip y-axis of loaded texture.
+        stbi_set_flip_vertically_on_load(true);
+
+        // Shader.
+        Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
+        
+        // Model.
+        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/backpack.obj");
+
+        glEnable(GL_DEPTH_TEST);
+        // Capture the mouse in the window.
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set call back function to process mouse movement.
+        glfwSetCursorPosCallback(window, processMouseMovement);
+        // Set call back function to process mouse scroll.
+        glfwSetScrollCallback(window, processMouseScroll);
+        
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window)) {
+            /* Render here */
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            float current_frame = glfwGetTime();
+            delta_time = current_frame - last_frame;
+            last_frame = current_frame;
+
+            processKeyboard(window);
+
+            modelShader.use();
+            // view/projection transformations
+            glm::mat4 projection =
+                glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            glm::mat4 view = camera.getViewMatrix();
+            modelShader.setMat4("projection", projection);
+            modelShader.setMat4("view", view);
+
+            // render the loaded model
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(
+                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
+            model =
+                glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
+            modelShader.setMat4("model", model);
+            modeler.draw(modelShader);
+
+            /* Swap front and back buffers */
+            glfwSwapBuffers(window);
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+    }
 }  // namespace Model
 
 int main(void)
@@ -627,7 +683,8 @@ int main(void)
     // drawTriangle(window, vertices, sizeof(vertices));
 
     // GettingStarted::drawBox(window);
-    Lighting::drawBox(window);
+    //Lighting::drawBox(window);
+    BasicModel::drawModel(window);
 
     glfwTerminate();
     return 0;

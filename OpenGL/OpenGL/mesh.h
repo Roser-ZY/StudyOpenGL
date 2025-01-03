@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "shader.h"
+#include "assimp/types.h"
 
 using std::string;
 using std::vector;

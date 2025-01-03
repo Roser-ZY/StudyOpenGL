@@ -11,7 +11,7 @@ using std::vector;
 
 static unsigned int textureFromFile(const char* path, const string& directory, bool gamma = false);
 
-Model::Model(char* path)
+Model::Model(const char* path)
 {
     loadModel(path);
 }
@@ -94,6 +94,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         vector<Texture> specular_maps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
     }
+
+    return Mesh(vertices, indices, textures);
 }
 
 vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string type_name)
@@ -122,4 +124,43 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
 }
 
 // Static.
-unsigned int textureFromFile()
+unsigned int textureFromFile(const char* path, const string& directory, bool gamma)
+{
+    string filename = string(path);
+    filename = directory + '/' + filename;
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Flip vertically.
+    stbi_set_flip_vertically_on_load(true);
+
+    // Load texture.
+    int width = 0;
+    int height = 0;
+    int nrChannels = 0;
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+    if (data != nullptr) {
+        GLenum rgb_mode;
+        if (nrChannels == 1) {
+            rgb_mode = GL_RED;
+        } else if (nrChannels == 3) {
+            rgb_mode = GL_RGB;
+        } else if (nrChannels == 4) {
+            rgb_mode = GL_RGBA;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, width, height, 0, rgb_mode, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture." << std::endl;
+    }
+    // Recycle the image data.
+    stbi_image_free(data);
+    return texture;
+}
