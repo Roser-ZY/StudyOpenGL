@@ -166,8 +166,12 @@
     <None Include="lighting\box_shader.vs" />
     <None Include="lighting\lamp_shader.fs" />
     <None Include="lighting\lamp_shader.vs" />
+    <None Include="model\lamp_shader.fs" />
+    <None Include="model\lamp_shader.vs" />
     <None Include="model\model.fs" />
     <None Include="model\model.vs" />
+    <None Include="model\model_shader.fs" />
+    <None Include="model\model_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

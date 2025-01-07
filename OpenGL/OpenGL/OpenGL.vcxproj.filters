@@ -91,5 +91,17 @@
     <None Include="model\model.vs">
       <Filter>资源文件\model</Filter>
     </None>
+    <None Include="model\lamp_shader.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\lamp_shader.vs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\model_shader.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\model_shader.vs">
+      <Filter>资源文件\model</Filter>
+    </None>
   </ItemGroup>
 </Project>
