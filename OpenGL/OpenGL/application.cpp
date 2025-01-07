@@ -605,7 +605,7 @@ namespace BasicModel {
                            "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
         
         // Model.
-        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/backpack.obj");
+        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
 
         glEnable(GL_DEPTH_TEST);
         // Capture the mouse in the window.
