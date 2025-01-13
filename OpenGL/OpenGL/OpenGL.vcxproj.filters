@@ -22,6 +22,9 @@
     <Filter Include="资源文件\model">
       <UniqueIdentifier>{c6a372d1-440c-4828-8e98-bc871645cf48}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\advanced">
+      <UniqueIdentifier>{5289607a-d2f9-40a2-a03f-7fa4912a7e7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp">
@@ -102,6 +105,9 @@
     </None>
     <None Include="model\model_shader.vs">
       <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="advanced\single_color.fs">
+      <Filter>资源文件\advanced</Filter>
     </None>
   </ItemGroup>
 </Project>

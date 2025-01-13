@@ -822,6 +822,97 @@ namespace BasicModel {
     }
 }  // namespace Model
 
+namespace Advanced {
+    void drawModel(GLFWwindow* window)
+    {
+        // Flip y-axis of loaded texture.
+        stbi_set_flip_vertically_on_load(true);
+
+        // Shader.
+        Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
+
+        Shader singleColorShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/single_color.fs");
+
+        // Model.
+        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
+
+        // Depth test.
+        glEnable(GL_DEPTH_TEST);
+        // Stencil test.
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        // Capture the mouse in the window.
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set call back function to process mouse movement.
+        glfwSetCursorPosCallback(window, processMouseMovement);
+        // Set call back function to process mouse scroll.
+        glfwSetScrollCallback(window, processMouseScroll);
+
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window)) {
+            /* Render here */
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            float current_frame = glfwGetTime();
+            delta_time = current_frame - last_frame;
+            last_frame = current_frame;
+
+            processKeyboard(window);
+
+            modelShader.use();
+            // view/projection transformations
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            glm::mat4 view = camera.getViewMatrix();
+            modelShader.setMat4("projection", projection);
+            modelShader.setMat4("view", view);
+
+            // Draw the model as normal, and write to the stencil buffer.
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilMask(0xFF);
+            // render the loaded model
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(
+                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
+            model =
+                glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
+            modelShader.setMat4("model", model);
+            modeler.draw(modelShader);
+
+            singleColorShader.use();
+            singleColorShader.setMat4("projection", projection);
+            singleColorShader.setMat4("view", view);
+            // Draw the model again, but scale slightly.
+            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            glStencilMask(0xFF);
+            // Disable depth test.
+            glDisable(GL_DEPTH_TEST);
+            float scale = 1.1f;
+            model = glm::mat4(1.0f);
+            model = glm::translate(
+                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
+            model = glm::scale(model,
+                               glm::vec3(scale, scale, scale));  // Scale a little bigger.
+            singleColorShader.setMat4("model", model);
+            modeler.draw(singleColorShader);
+
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            // Enable depth test.
+            glEnable(GL_DEPTH_TEST);
+
+            /* Swap front and back buffers */
+            glfwSwapBuffers(window);
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+    }
+}
+
 int main(void)
 {
     /* Initialize the library */
@@ -853,7 +944,7 @@ int main(void)
 
     // GettingStarted::drawBox(window);
     //Lighting::drawBox(window);
-    BasicModel::drawModelWithLight(window);
+    Advanced::drawModel(window);
 
     glfwTerminate();
     return 0;
