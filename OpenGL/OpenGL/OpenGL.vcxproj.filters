@@ -109,5 +109,11 @@
     <None Include="advanced\single_color.fs">
       <Filter>资源文件\advanced</Filter>
     </None>
+    <None Include="advanced\blending.fs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\blending.vs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
   </ItemGroup>
 </Project>

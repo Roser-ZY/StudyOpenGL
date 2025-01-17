@@ -158,6 +158,8 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="advanced\blending.fs" />
+    <None Include="advanced\blending.vs" />
     <None Include="advanced\single_color.fs" />
     <None Include="getting_started\box_shader.fs" />
     <None Include="getting_started\box_shader.vs" />

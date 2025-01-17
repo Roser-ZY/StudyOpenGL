@@ -652,6 +652,7 @@ namespace BasicModel {
         }
     }
 
+    // 还没适配完
     glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
     void drawModelWithLight(GLFWwindow* window)
     {
@@ -756,7 +757,7 @@ namespace BasicModel {
         model_shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
         model_shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-        // Light damping.
+        //// Light damping.
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -771,6 +772,7 @@ namespace BasicModel {
             processKeyboard(window);
             // Camera.
             glm::mat4 view = camera.getViewMatrix();
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
             glm::mat4 model(1.0f);
             // Use the box shader.
             model_shader.use();
@@ -823,6 +825,7 @@ namespace BasicModel {
 }  // namespace Model
 
 namespace Advanced {
+    // 还有 Bug
     void drawModel(GLFWwindow* window)
     {
         // Flip y-axis of loaded texture.
@@ -853,9 +856,93 @@ namespace Advanced {
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
+            processKeyboard(window);
+
             /* Render here */
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            float current_frame = glfwGetTime();
+            delta_time = current_frame - last_frame;
+            last_frame = current_frame;
+
+
+            // view/projection transformations
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            glm::mat4 view = camera.getViewMatrix();
+
+            // Draw the model as normal, and write to the stencil buffer.
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilMask(0xFF);
+
+            modelShader.use();
+            modelShader.setMat4("projection", projection);
+            modelShader.setMat4("view", view);
+            // render the loaded model
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(
+                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
+            model =
+                glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
+            modelShader.setMat4("model", model);
+            modeler.draw(modelShader);
+
+            // Draw the model again, but scale slightly.
+            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            glStencilMask(0x00);
+            // Disable depth test.
+            glDisable(GL_DEPTH_TEST);
+
+            singleColorShader.use();
+            singleColorShader.setMat4("projection", projection);
+            singleColorShader.setMat4("view", view);
+            float scale = 0.9f;
+            model = glm::mat4(1.0f);
+            model = glm::translate(
+                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
+            model = glm::scale(model,
+                               glm::vec3(scale, scale, scale));  // Scale a little bigger.
+            singleColorShader.setMat4("model", model);
+            modeler.draw(singleColorShader);
+
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+            // Enable depth test.
+            glEnable(GL_DEPTH_TEST);
+
+            /* Swap front and back buffers */
+            glfwSwapBuffers(window);
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+    }
+
+    void drawModelWithBlender(GLFWwindow* window)
+    {
+        // Flip y-axis of loaded texture.
+        stbi_set_flip_vertically_on_load(true);
+
+        // Shader.
+        Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
+
+        // Model.
+        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
+
+        glEnable(GL_DEPTH_TEST);
+        // Capture the mouse in the window.
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set call back function to process mouse movement.
+        glfwSetCursorPosCallback(window, processMouseMovement);
+        // Set call back function to process mouse scroll.
+        glfwSetScrollCallback(window, processMouseScroll);
+
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window)) {
+            /* Render here */
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             float current_frame = glfwGetTime();
             delta_time = current_frame - last_frame;
@@ -870,9 +957,6 @@ namespace Advanced {
             modelShader.setMat4("projection", projection);
             modelShader.setMat4("view", view);
 
-            // Draw the model as normal, and write to the stencil buffer.
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            glStencilMask(0xFF);
             // render the loaded model
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(
@@ -881,28 +965,6 @@ namespace Advanced {
                 glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
             modelShader.setMat4("model", model);
             modeler.draw(modelShader);
-
-            singleColorShader.use();
-            singleColorShader.setMat4("projection", projection);
-            singleColorShader.setMat4("view", view);
-            // Draw the model again, but scale slightly.
-            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-            glStencilMask(0xFF);
-            // Disable depth test.
-            glDisable(GL_DEPTH_TEST);
-            float scale = 1.1f;
-            model = glm::mat4(1.0f);
-            model = glm::translate(
-                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
-            model = glm::scale(model,
-                               glm::vec3(scale, scale, scale));  // Scale a little bigger.
-            singleColorShader.setMat4("model", model);
-            modeler.draw(singleColorShader);
-
-            glStencilMask(0xFF);
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            // Enable depth test.
-            glEnable(GL_DEPTH_TEST);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -944,7 +1006,10 @@ int main(void)
 
     // GettingStarted::drawBox(window);
     //Lighting::drawBox(window);
-    Advanced::drawModel(window);
+    //BasicModel::drawModel(window);
+    //BasicModel::drawModelWithLight(window);
+    //Advanced::drawModel(window);
+    Advanced::drawModelWithBlender(window);
 
     glfwTerminate();
     return 0;
