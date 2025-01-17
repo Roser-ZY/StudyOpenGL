@@ -49,7 +49,7 @@ void Mesh::draw(Shader shader) {
         } else if (textures[i].type == "texture_specular") {
             specularIdx++;
         }
-        shader.setInt(("material." + textures[i].type + '[' + std::to_string(diffuseIdx) + ']'), i);
+        shader.setInt((textures[i].type + std::to_string(diffuseIdx)), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
@@ -72,7 +72,7 @@ void Mesh::setupMesh()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     // Set vertex normals.
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
 
     glBindVertexArray(0);
