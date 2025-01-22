@@ -115,5 +115,20 @@
     <None Include="advanced\blending.vs">
       <Filter>资源文件\advanced</Filter>
     </None>
+    <None Include="model\2.stencil_single_color.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\2.stencil_testing.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\2.stencil_testing.vs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\3.2.blending.fs">
+      <Filter>资源文件\model</Filter>
+    </None>
+    <None Include="model\3.2.blending.vs">
+      <Filter>资源文件\model</Filter>
+    </None>
   </ItemGroup>
 </Project>

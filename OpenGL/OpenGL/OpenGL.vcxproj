@@ -169,6 +169,11 @@
     <None Include="lighting\box_shader.vs" />
     <None Include="lighting\lamp_shader.fs" />
     <None Include="lighting\lamp_shader.vs" />
+    <None Include="model\2.stencil_single_color.fs" />
+    <None Include="model\2.stencil_testing.fs" />
+    <None Include="model\2.stencil_testing.vs" />
+    <None Include="model\3.2.blending.fs" />
+    <None Include="model\3.2.blending.vs" />
     <None Include="model\lamp_shader.fs" />
     <None Include="model\lamp_shader.vs" />
     <None Include="model\model.fs" />

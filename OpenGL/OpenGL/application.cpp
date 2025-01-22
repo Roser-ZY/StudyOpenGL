@@ -1,10 +1,11 @@
 #include "camera.h"
 #include "glad/glad.h"
-#include "shader.h"
 #include "model.h"
+#include "shader.h"
 
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <map>
 #include <vector>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -95,7 +96,7 @@ unsigned int bindElementBufferObject(unsigned int indices[], unsigned int indice
     return element_buffer_object;
 }
 
-unsigned int generateTexture(const char* image_path, int active_texture, int rgb_mode)
+unsigned int generateTexture(const char* image_path, int active_texture)
 {
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -116,6 +117,14 @@ unsigned int generateTexture(const char* image_path, int active_texture, int rgb
     int nrChannels = 0;
     unsigned char* data = stbi_load(image_path, &width, &height, &nrChannels, 0);
     if (data != nullptr) {
+        int rgb_mode;
+        if (nrChannels == 1)
+            rgb_mode = GL_RED;
+        else if (nrChannels == 3)
+            rgb_mode = GL_RGB;
+        else if (nrChannels == 4)
+            rgb_mode = GL_RGBA;
+
         glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, width, height, 0, rgb_mode, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -191,9 +200,9 @@ namespace GettingStarted {
 
         // Texture.
         unsigned int texture1 =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0, GL_RGB);
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0);
         unsigned int texture2 =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1, GL_RGBA);
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1);
 
         // Attributes.
         // Vertex positions.
@@ -291,9 +300,9 @@ namespace GettingStarted {
 
         // Texture.
         unsigned int texture1 =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0, GL_RGB);
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container.jpg", GL_TEXTURE0);
         unsigned int texture2 =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1, GL_RGBA);
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\awesomeface.png", GL_TEXTURE1);
 
         // Attributes.
         // Vertex positions.
@@ -446,9 +455,9 @@ namespace Lighting {
 
         // Texture.
         unsigned int diffuse_texture =
-            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2.png", GL_TEXTURE0, GL_RGBA);
-        unsigned int specular_texture = generateTexture(
-            "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1, GL_RGBA);
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2.png", GL_TEXTURE0);
+        unsigned int specular_texture =
+            generateTexture("D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\container2_specular.png", GL_TEXTURE1);
         // unsigned int emission_texture = generateTexture(
         //     "D:\\Turotials\\StudyOpenGL\\OpenGL\\Assets\\matrix.jpg", GL_TEXTURE2, GL_RGB);
 
@@ -603,7 +612,7 @@ namespace BasicModel {
         // Shader.
         Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
                            "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
-        
+
         // Model.
         Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
 
@@ -614,7 +623,7 @@ namespace BasicModel {
         glfwSetCursorPosCallback(window, processMouseMovement);
         // Set call back function to process mouse scroll.
         glfwSetScrollCallback(window, processMouseScroll);
-        
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
@@ -629,8 +638,7 @@ namespace BasicModel {
 
             modelShader.use();
             // view/projection transformations
-            glm::mat4 projection =
-                glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
             glm::mat4 view = camera.getViewMatrix();
             modelShader.setMat4("projection", projection);
             modelShader.setMat4("view", view);
@@ -822,31 +830,104 @@ namespace BasicModel {
         glDeleteVertexArrays(1, &light_vao);
         glDeleteBuffers(1, &vbo);
     }
-}  // namespace Model
+}  // namespace BasicModel
 
 namespace Advanced {
     // »¹ÓÐ Bug
     void drawModel(GLFWwindow* window)
     {
-        // Flip y-axis of loaded texture.
-        stbi_set_flip_vertically_on_load(true);
+        //// Flip y-axis of loaded texture.
+        // stbi_set_flip_vertically_on_load(true);
 
-        // Shader.
-        Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
-                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
+        //// Shader.
+        // Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+        //                    "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
 
-        Shader singleColorShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
-                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/single_color.fs");
+        // Shader singleColorShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
+        //                    "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/single_color.fs");
 
-        // Model.
-        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
+        //// Model.
+        // Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
 
-        // Depth test.
-        glEnable(GL_DEPTH_TEST);
-        // Stencil test.
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        //// Depth test.
+        // glEnable(GL_DEPTH_TEST);
+        //// Stencil test.
+        // glEnable(GL_STENCIL_TEST);
+        // glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        //// Capture the mouse in the window.
+        // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //// Set call back function to process mouse movement.
+        // glfwSetCursorPosCallback(window, processMouseMovement);
+        //// Set call back function to process mouse scroll.
+        // glfwSetScrollCallback(window, processMouseScroll);
+
+        ///* Loop until the user closes the window */
+        // while (!glfwWindowShouldClose(window)) {
+        //     processKeyboard(window);
+
+        //    /* Render here */
+        //    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        //    float current_frame = glfwGetTime();
+        //    delta_time = current_frame - last_frame;
+        //    last_frame = current_frame;
+
+
+        //    // view/projection transformations
+        //    glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+        //    glm::mat4 view = camera.getViewMatrix();
+
+        //    // Draw the model as normal, and write to the stencil buffer.
+        //    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        //    glStencilMask(0xFF);
+
+        //    modelShader.use();
+        //    modelShader.setMat4("projection", projection);
+        //    modelShader.setMat4("view", view);
+        //    // render the loaded model
+        //    glm::mat4 model = glm::mat4(1.0f);
+        //    model = glm::translate(
+        //        model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the
+        //        scene
+        //    model =
+        //        glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
+        //    modelShader.setMat4("model", model);
+        //    modeler.draw(modelShader);
+
+        //    // Draw the model again, but scale slightly.
+        //    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        //    glStencilMask(0x00);
+        //    // Disable depth test.
+        //    glDisable(GL_DEPTH_TEST);
+
+        //    singleColorShader.use();
+        //    singleColorShader.setMat4("projection", projection);
+        //    singleColorShader.setMat4("view", view);
+        //    float scale = 0.9f;
+        //    model = glm::mat4(1.0f);
+        //    model = glm::translate(
+        //        model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the
+        //        scene
+        //    model = glm::scale(model,
+        //                       glm::vec3(scale, scale, scale));  // Scale a little bigger.
+        //    singleColorShader.setMat4("model", model);
+        //    modeler.draw(singleColorShader);
+
+        //    glStencilMask(0xFF);
+        //    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        //    // Enable depth test.
+        //    glEnable(GL_DEPTH_TEST);
+
+        //    /* Swap front and back buffers */
+        //    glfwSwapBuffers(window);
+
+        //    /* Poll for and process events */
+        //    glfwPollEvents();
+        //}
+        //
+
         // Capture the mouse in the window.
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         // Set call back function to process mouse movement.
@@ -854,89 +935,280 @@ namespace Advanced {
         // Set call back function to process mouse scroll.
         glfwSetScrollCallback(window, processMouseScroll);
 
-        /* Loop until the user closes the window */
+        // configure global opengl state
+        // -----------------------------
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        // build and compile shaders
+        // -------------------------
+        Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/2.stencil_testing.vs",
+                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/2.stencil_testing.fs");
+        Shader shaderSingleColor("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/2.stencil_testing.vs",
+                                 "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/2.stencil_single_color.fs");
+
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+        // ------------------------------------------------------------------
+        float cubeVertices[] = {
+            // positions          // texture Coords
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+            0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+            -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
+
+            -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+            0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+            -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
+        float planeVertices[] = {
+            // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture
+            // wrapping mode). this will cause the floor texture to repeat)
+            5.0f, -0.5f, 5.0f, 2.0f, 0.0f, -5.0f, -0.5f, 5.0f,  0.0f, 0.0f, -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
+
+            5.0f, -0.5f, 5.0f, 2.0f, 0.0f, -5.0f, -0.5f, -5.0f, 0.0f, 2.0f, 5.0f,  -0.5f, -5.0f, 2.0f, 2.0f};
+        // cube VAO
+        unsigned int cubeVAO, cubeVBO;
+        glGenVertexArrays(1, &cubeVAO);
+        glGenBuffers(1, &cubeVBO);
+        glBindVertexArray(cubeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glBindVertexArray(0);
+        // plane VAO
+        unsigned int planeVAO, planeVBO;
+        glGenVertexArrays(1, &planeVAO);
+        glGenBuffers(1, &planeVBO);
+        glBindVertexArray(planeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glBindVertexArray(0);
+
+        // load textures
+        // -------------
+        unsigned int cubeTexture = generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/marble.jpg", GL_TEXTURE0);
+        unsigned int floorTexture = generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/metal.png", GL_TEXTURE1);
+
+        // shader configuration
+        // --------------------
+        shader.use();
+        shader.setInt("texture1", 0);
+
+        // render loop
+        // -----------
         while (!glfwWindowShouldClose(window)) {
-            processKeyboard(window);
-
-            /* Render here */
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            float current_frame = glfwGetTime();
+            // per-frame time logic
+            // --------------------
+            float current_frame = static_cast<float>(glfwGetTime());
             delta_time = current_frame - last_frame;
             last_frame = current_frame;
 
+            // input
+            // -----
+            processKeyboard(window);
 
-            // view/projection transformations
-            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            // render
+            // ------
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+                    GL_STENCIL_BUFFER_BIT);  // don't forget to clear the stencil buffer!
+
+            // set uniforms
+            shaderSingleColor.use();
+            glm::mat4 model = glm::mat4(1.0f);
             glm::mat4 view = camera.getViewMatrix();
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.f, 0.1f, 100.0f);
+            shaderSingleColor.setMat4("view", view);
+            shaderSingleColor.setMat4("projection", projection);
 
-            // Draw the model as normal, and write to the stencil buffer.
+            shader.use();
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+
+            //// draw floor as normal, but don't write the floor to the stencil buffer, we only care about the
+            /// containers. / We set its mask to 0x00 to not write to the stencil buffer.
+            // glStencilMask(0x00);
+            //// floor
+            // glBindVertexArray(planeVAO);
+            // glBindTexture(GL_TEXTURE_2D, floorTexture);
+            // shader.setMat4("model", glm::mat4(1.0f));
+            // glDrawArrays(GL_TRIANGLES, 0, 6);
+            // glBindVertexArray(0);
+
+            // 1st. render pass, draw objects as normal, writing to the stencil buffer
+            // --------------------------------------------------------------------
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
+            // cubes
+            glBindVertexArray(cubeVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, cubeTexture);
+            model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
-            modelShader.use();
-            modelShader.setMat4("projection", projection);
-            modelShader.setMat4("view", view);
-            // render the loaded model
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(
-                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
-            model =
-                glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
-            modelShader.setMat4("model", model);
-            modeler.draw(modelShader);
-
-            // Draw the model again, but scale slightly.
+            // 2nd. render pass: now draw slightly scaled versions of the objects, this time disabling stencil writing.
+            // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not
+            // drawn, thus only drawing the objects' size differences, making it look like borders.
+            // -----------------------------------------------------------------------------------------------------------------------------
             glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
             glStencilMask(0x00);
-            // Disable depth test.
             glDisable(GL_DEPTH_TEST);
-
-            singleColorShader.use();
-            singleColorShader.setMat4("projection", projection);
-            singleColorShader.setMat4("view", view);
-            float scale = 0.9f;
+            shaderSingleColor.use();
+            float scale = 1.1f;
+            // cubes
+            glBindVertexArray(cubeVAO);
+            glBindTexture(GL_TEXTURE_2D, cubeTexture);
             model = glm::mat4(1.0f);
-            model = glm::translate(
-                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
-            model = glm::scale(model,
-                               glm::vec3(scale, scale, scale));  // Scale a little bigger.
-            singleColorShader.setMat4("model", model);
-            modeler.draw(singleColorShader);
-
+            model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+            model = glm::scale(model, glm::vec3(scale, scale, scale));
+            shaderSingleColor.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(scale, scale, scale));
+            shaderSingleColor.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
             glStencilMask(0xFF);
             glStencilFunc(GL_ALWAYS, 0, 0xFF);
-            // Enable depth test.
             glEnable(GL_DEPTH_TEST);
 
-            /* Swap front and back buffers */
+            // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+            // -------------------------------------------------------------------------------
             glfwSwapBuffers(window);
-
-            /* Poll for and process events */
             glfwPollEvents();
         }
+
+        // optional: de-allocate all resources once they've outlived their purpose:
+        // ------------------------------------------------------------------------
+        glDeleteVertexArrays(1, &cubeVAO);
+        glDeleteVertexArrays(1, &planeVAO);
+        glDeleteBuffers(1, &cubeVBO);
+        glDeleteBuffers(1, &planeVBO);
     }
 
     void drawModelWithBlender(GLFWwindow* window)
     {
-        // Flip y-axis of loaded texture.
-        stbi_set_flip_vertically_on_load(true);
-
         // Shader.
-        Shader modelShader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.vs",
-                           "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/model.fs");
-
-        // Model.
-        Model modeler("D:/Turotials/StudyOpenGL/OpenGL/Assets/nanosuit.obj");
+        Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/3.2.blending.vs",
+                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/3.2.blending.fs");
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // Capture the mouse in the window.
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         // Set call back function to process mouse movement.
         glfwSetCursorPosCallback(window, processMouseMovement);
         // Set call back function to process mouse scroll.
         glfwSetScrollCallback(window, processMouseScroll);
+
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+        // ------------------------------------------------------------------
+        float cubeVertices[] = {
+            // positions          // texture Coords
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+            0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+            -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
+
+            -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+            0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+            -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
+        float planeVertices[] = {
+            // positions          // texture Coords
+            5.0f, -0.5f, 5.0f, 2.0f, 0.0f, -5.0f, -0.5f, 5.0f,  0.0f, 0.0f, -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
+
+            5.0f, -0.5f, 5.0f, 2.0f, 0.0f, -5.0f, -0.5f, -5.0f, 0.0f, 2.0f, 5.0f,  -0.5f, -5.0f, 2.0f, 2.0f};
+        float transparentVertices[] = {
+            // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+            0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+
+            0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f,  0.0f, 1.0f, 0.0f};
+        // cube VAO
+        unsigned int cubeVAO, cubeVBO;
+        glGenVertexArrays(1, &cubeVAO);
+        glGenBuffers(1, &cubeVBO);
+        glBindVertexArray(cubeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        // plane VAO
+        unsigned int planeVAO, planeVBO;
+        glGenVertexArrays(1, &planeVAO);
+        glGenBuffers(1, &planeVBO);
+        glBindVertexArray(planeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        // transparent VAO
+        unsigned int transparentVAO, transparentVBO;
+        glGenVertexArrays(1, &transparentVAO);
+        glGenBuffers(1, &transparentVBO);
+        glBindVertexArray(transparentVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glBindVertexArray(0);
+
+        // load textures
+        // -------------
+        unsigned int cubeTexture = generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/marble.jpg", GL_TEXTURE0);
+        unsigned int floorTexture = generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/metal.png", GL_TEXTURE0);
+        unsigned int transparentTexture =
+            generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/window.png", GL_TEXTURE0);
+
+        // transparent window locations
+        // --------------------------------
+        vector<glm::vec3> windows{glm::vec3(-1.5f, 0.0f, -0.48f), glm::vec3(1.5f, 0.0f, 0.51f),
+                                  glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(-0.3f, 0.0f, -2.3f),
+                                  glm::vec3(0.5f, 0.0f, -0.6f)};
+
+        // shader configuration
+        // --------------------
+        shader.use();
+        shader.setInt("texture1", 0);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -950,21 +1222,52 @@ namespace Advanced {
 
             processKeyboard(window);
 
-            modelShader.use();
-            // view/projection transformations
+            // sort the transparent windows before rendering
+            // ---------------------------------------------
+            std::map<float, glm::vec3> sorted;
+            for (unsigned int i = 0; i < windows.size(); i++) {
+                float distance = glm::length(camera.position_ - windows[i]);
+                sorted[distance] = windows[i];
+            }
+
+            // render
+            // ------
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // draw objects
+            shader.use();
             glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
             glm::mat4 view = camera.getViewMatrix();
-            modelShader.setMat4("projection", projection);
-            modelShader.setMat4("view", view);
-
-            // render the loaded model
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(
-                model, glm::vec3(0.0f, 0.0f, 0.0f));             // translate it down so it's at the center of the scene
-            model =
-                glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));  // it's a bit too big for our scene, so scale it down
-            modelShader.setMat4("model", model);
-            modeler.draw(modelShader);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
+            // cubes
+            glBindVertexArray(cubeVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, cubeTexture);
+            model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            // floor
+            glBindVertexArray(planeVAO);
+            glBindTexture(GL_TEXTURE_2D, floorTexture);
+            model = glm::mat4(1.0f);
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            // windows (from furthest to nearest)
+            glBindVertexArray(transparentVAO);
+            glBindTexture(GL_TEXTURE_2D, transparentTexture);
+            for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, it->second);
+                shader.setMat4("model", model);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+            }
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -972,8 +1275,15 @@ namespace Advanced {
             /* Poll for and process events */
             glfwPollEvents();
         }
+
+        // optional: de-allocate all resources once they've outlived their purpose:
+        // ------------------------------------------------------------------------
+        glDeleteVertexArrays(1, &cubeVAO);
+        glDeleteVertexArrays(1, &planeVAO);
+        glDeleteBuffers(1, &cubeVBO);
+        glDeleteBuffers(1, &planeVBO);
     }
-}
+}  // namespace Advanced
 
 int main(void)
 {
@@ -1005,10 +1315,10 @@ int main(void)
     // drawTriangle(window, vertices, sizeof(vertices));
 
     // GettingStarted::drawBox(window);
-    //Lighting::drawBox(window);
-    //BasicModel::drawModel(window);
-    //BasicModel::drawModelWithLight(window);
-    //Advanced::drawModel(window);
+    // Lighting::drawBox(window);
+    // BasicModel::drawModel(window);
+    // BasicModel::drawModelWithLight(window);
+    // Advanced::drawModel(window);
     Advanced::drawModelWithBlender(window);
 
     glfwTerminate();
