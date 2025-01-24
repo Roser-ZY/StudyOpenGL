@@ -942,6 +942,7 @@ namespace Advanced {
         glEnable(GL_STENCIL_TEST);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
         // build and compile shaders
         // -------------------------
         Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/model/2.stencil_testing.vs",
@@ -1118,6 +1119,8 @@ namespace Advanced {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
 
         // Capture the mouse in the window.
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -1129,24 +1132,49 @@ namespace Advanced {
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
         float cubeVertices[] = {
-            // positions          // texture Coords
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-            0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-
-            -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-
-            -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
-
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
-            0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-            0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-            -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
+            // back face
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  // bottom-left
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f,   // bottom-right
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,    // top-right
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,    // top-right
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,   // top-left
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  // bottom-left
+            // front face
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  // bottom-left
+            0.5f, 0.5f, 0.5f, 1.0f, 1.0f,    // top-right
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,   // bottom-right
+            0.5f, 0.5f, 0.5f, 1.0f, 1.0f,    // top-right
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  // bottom-left
+            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,   // top-left
+            // left face
+            -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    // top-right
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  // bottom-left
+            -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   // top-left
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  // bottom-left
+            -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    // top-right
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,   // bottom-right
+                                              // right face
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,     // top-left
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,    // top-right
+            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,   // bottom-right
+            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,   // bottom-right
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f,    // bottom-left
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,     // top-left
+            // bottom face
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  // top-right
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,    // bottom-left
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f,   // top-left
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,    // bottom-left
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  // top-right
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,   // bottom-right
+            // top face
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,  // top-left
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   // top-right
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    // bottom-right
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    // bottom-right
+            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,   // bottom-left
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f   // top-left
+        };
         float planeVertices[] = {
             // positions          // texture Coords
             5.0f, -0.5f, 5.0f, 2.0f, 0.0f, -5.0f, -0.5f, 5.0f,  0.0f, 0.0f, -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
