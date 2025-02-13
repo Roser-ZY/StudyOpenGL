@@ -130,5 +130,17 @@
     <None Include="model\3.2.blending.vs">
       <Filter>资源文件\model</Filter>
     </None>
+    <None Include="advanced\5.1.framebuffers.fs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\5.1.framebuffers.vs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\5.1.framebuffers_screen.fs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\5.1.framebuffers_screen.vs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
   </ItemGroup>
 </Project>

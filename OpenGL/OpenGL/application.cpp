@@ -1311,6 +1311,234 @@ namespace Advanced {
         glDeleteBuffers(1, &cubeVBO);
         glDeleteBuffers(1, &planeVBO);
     }
+
+    void drawExampleWithFramebuffer(GLFWwindow* window)
+    {
+        glEnable(GL_DEPTH_TEST);
+
+        Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/5.1.framebuffers.vs",
+                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/5.1.framebuffers.fs");
+        Shader screen_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/5.1.framebuffers_screen.vs",
+                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/5.1.framebuffers_screen.fs");
+
+
+        // Capture the mouse in the window.
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set call back function to process mouse movement.
+        glfwSetCursorPosCallback(window, processMouseMovement);
+        // Set call back function to process mouse scroll.
+        glfwSetScrollCallback(window, processMouseScroll);
+
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+        // ------------------------------------------------------------------
+        float cube_vertices[] = {
+            // positions          // texture Coords
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        };
+        float plane_vertices[] = {
+            // positions          // texture Coords 
+             5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+            -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+             5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+             5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+        };
+        float quad_vertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+            // positions   // texCoords
+            -1.0f,  1.0f,  0.0f, 1.0f,
+            -1.0f, -1.0f,  0.0f, 0.0f,
+             1.0f, -1.0f,  1.0f, 0.0f,
+
+            -1.0f,  1.0f,  0.0f, 1.0f,
+             1.0f, -1.0f,  1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 1.0f
+        };
+
+        // cube VAO
+        unsigned int cube_vao = 0;
+        unsigned int cube_vbo = 0;
+        glGenVertexArrays(1, &cube_vao);
+        glGenBuffers(1, &cube_vbo);
+        glBindVertexArray(cube_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), &cube_vertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        // plane VAO
+        unsigned int plane_vao = 0;
+        unsigned int plane_vbo = 0;
+        glGenVertexArrays(1, &plane_vao);
+        glGenBuffers(1, &plane_vbo);
+        glBindVertexArray(plane_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, plane_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), &plane_vertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        // screen quad VAO
+        unsigned int quad_vao, quad_vbo;
+        glGenVertexArrays(1, &quad_vao);
+        glGenBuffers(1, &quad_vbo);
+        glBindVertexArray(quad_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), &quad_vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+        unsigned int cube_texture =
+            generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/container.jpg", GL_TEXTURE0);
+        unsigned int floor_texture =
+            generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/marble.jpg", GL_TEXTURE1);
+
+        // Shader
+        shader.use();
+        shader.setInt("texture1", 0);
+
+        screen_shader.use();
+        screen_shader.setInt("screenTexture", 0);
+
+        // Framebuffer.
+        unsigned framebuffer = 0;
+        glGenFramebuffers(1, &framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        unsigned int texture_color_buffer = 0;
+        glGenTextures(1, &texture_color_buffer);
+        glBindTexture(GL_TEXTURE_2D, texture_color_buffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_color_buffer, 0);
+
+        unsigned int rbo = 0;
+        glGenRenderbuffers(1, &rbo);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 640, 480);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is no complete!" << std::endl;
+        }
+        // ½â°ó
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        while (!glfwWindowShouldClose(window)) {
+            float current_frame = static_cast<float>(glfwGetTime());
+            delta_time = current_frame - last_frame;
+            last_frame = current_frame;
+
+            processKeyboard(window);
+
+            // Bind framebuffer.
+            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+            glEnable(GL_DEPTH_TEST);
+
+            // Clear framebuffer's content.
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            shader.use();
+            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 view = camera.getViewMatrix();
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+
+            // Cubes
+            glBindVertexArray(cube_vao);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, cube_texture);
+            model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            // Floor
+            glBindVertexArray(plane_vao);
+            glBindTexture(GL_TEXTURE_2D, floor_texture);
+            shader.setMat4("model", glm::mat4(1.0f));
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
+
+            // Bind back to default framebuffer and draw quad plane.
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // Only one quad and no need depth test.
+            glDisable(GL_DEPTH_TEST);
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            screen_shader.use();
+            glBindVertexArray(quad_vao);
+            glBindTexture(GL_TEXTURE_2D, texture_color_buffer);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+
+        // optional: de-allocate all resources once they've outlived their purpose:
+        // ------------------------------------------------------------------------
+        glDeleteVertexArrays(1, &cube_vao);
+        glDeleteVertexArrays(1, &plane_vao);
+        glDeleteVertexArrays(1, &quad_vao);
+        glDeleteBuffers(1, &cube_vbo);
+        glDeleteBuffers(1, &plane_vbo);
+        glDeleteBuffers(1, &quad_vbo);
+        glDeleteRenderbuffers(1, &rbo);
+        glDeleteFramebuffers(1, &framebuffer);
+    }
 }  // namespace Advanced
 
 int main(void)
@@ -1347,7 +1575,8 @@ int main(void)
     // BasicModel::drawModel(window);
     // BasicModel::drawModelWithLight(window);
     // Advanced::drawModel(window);
-    Advanced::drawModelWithBlender(window);
+    // Advanced::drawModelWithBlender(window);
+    Advanced::drawExampleWithFramebuffer(window);
 
     glfwTerminate();
     return 0;
