@@ -142,5 +142,17 @@
     <None Include="advanced\5.1.framebuffers_screen.vs">
       <Filter>资源文件\advanced</Filter>
     </None>
+    <None Include="advanced\6.1.cubemaps.fs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\6.1.cubemaps.vs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\6.1.skybox.fs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
+    <None Include="advanced\6.1.skybox.vs">
+      <Filter>资源文件\advanced</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -162,6 +162,10 @@
     <None Include="advanced\5.1.framebuffers.vs" />
     <None Include="advanced\5.1.framebuffers_screen.fs" />
     <None Include="advanced\5.1.framebuffers_screen.vs" />
+    <None Include="advanced\6.1.cubemaps.fs" />
+    <None Include="advanced\6.1.cubemaps.vs" />
+    <None Include="advanced\6.1.skybox.fs" />
+    <None Include="advanced\6.1.skybox.vs" />
     <None Include="advanced\blending.fs" />
     <None Include="advanced\blending.vs" />
     <None Include="advanced\single_color.fs" />
