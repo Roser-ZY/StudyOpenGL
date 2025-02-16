@@ -1,0 +1,10 @@
+^D:\TUTORIALS\STUDYOPENGL\LIBRARY\GLFW-3.4\GLFW-3.4\BUILD\CMAKEFILES\6FC08D71F294401419C81C2978FAD643\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

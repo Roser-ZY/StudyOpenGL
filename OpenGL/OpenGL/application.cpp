@@ -19,6 +19,8 @@ static Camera camera;
 static float delta_time = 0.0f;  // 当前帧与上一帧的时间差
 static float last_frame = 0.0f;  // 上一帧的时间
 
+static const string root_path = "D:/Tutorials/StudyOpenGL/OpenGL";
+
 void processKeyboard(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -1584,10 +1586,12 @@ namespace Advanced {
     {
         glEnable(GL_DEPTH_TEST);
 
-        Shader shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/6.1.cubemaps.vs",
-                      "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/6.1.cubemaps.fs");
-        Shader skybox_shader("D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/6.1.skybox.vs",
-                             "D:/Turotials/StudyOpenGL/OpenGL/OpenGL/advanced/6.1.skybox.fs");
+        Shader shader(
+            (root_path + "/OpenGL/advanced/6.1.cubemaps.vs").c_str(),
+                      (root_path + "/OpenGL/advanced/6.1.cubemaps.fs").c_str());
+        Shader skybox_shader(
+            (root_path + "/OpenGL/advanced/6.1.skybox.vs").c_str(),
+                             (root_path + "/OpenGL/advanced/6.1.skybox.fs").c_str());
 
 
         // Capture the mouse in the window.
@@ -1600,24 +1604,49 @@ namespace Advanced {
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
         float cube_vertices[] = {
-            // positions          // texture Coords
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-            0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            // positions          // normals
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-            -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-            -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
-            0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-            0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-            -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        };
 
         float skybox_vertices[] = {// positions
                                    -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f,
@@ -1646,9 +1675,9 @@ namespace Advanced {
         glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), &cube_vertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         // skybox VAO
         unsigned int skyboxVAO, skyboxVBO;
         glGenVertexArrays(1, &skyboxVAO);
@@ -1661,20 +1690,20 @@ namespace Advanced {
 
         // load textures
         // -------------
-        unsigned int cube_texture =
-            generateTexture("D:/Turotials/StudyOpenGL/OpenGL/Assets/container.jpg", GL_TEXTURE0);
-        vector<std::string> faces = {"D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/right.jpg",
-                                     "D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/left.jpg",
-                                     "D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/top.jpg",
-                                     "D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/bottom.jpg",
-                                     "D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/front.jpg",
-                                     "D:/Turotials/StudyOpenGL/OpenGL/Assets/Skybox/skybox/back.jpg"};
+        unsigned int cube_texture = generateTexture(
+            (root_path + "/Assets/container.jpg").c_str(), GL_TEXTURE0);
+        vector<std::string> faces = {root_path + "/Assets/Skybox/skybox/right.jpg",
+                                     root_path + "/Assets/Skybox/skybox/left.jpg",
+                                     root_path + "/Assets/Skybox/skybox/top.jpg",
+                                     root_path + "/Assets/Skybox/skybox/bottom.jpg",
+                                     root_path + "/Assets/Skybox/skybox/front.jpg",
+                                     root_path + "/Assets/Skybox/skybox/back.jpg"};
         unsigned int cubemap_texture = loadCubemap(faces);
 
         // shader configuration
         // --------------------
         shader.use();
-        shader.setInt("texture1", 0);
+        shader.setInt("skybox", 0);
 
         skybox_shader.use();
         skybox_shader.setInt("skybox", 0);
@@ -1693,12 +1722,29 @@ namespace Advanced {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // Avoid depth test to let the skybox always behind other things.
-            glDepthMask(GL_FALSE);
-            skybox_shader.use();
+            // draw scene as normal
+            shader.use();
             glm::mat4 model = glm::mat4(1.0f);
             glm::mat4 view = camera.getViewMatrix();
-            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f); 
+            shader.setMat4("model", model);
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+            shader.setVec3("cameraPos", camera.position_);
+            // cubes
+            glBindVertexArray(cubeVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, cube_texture);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
+
+            // Avoid depth test to let the skybox always behind other things.
+            glDepthFunc(GL_LEQUAL);
+            skybox_shader.use();
+            model = glm::mat4(1.0f);
+            view = glm::mat4(glm::mat3(camera.getViewMatrix()));
+            projection = glm::perspective(
+                glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f);
             skybox_shader.setMat4("view", view);
             skybox_shader.setMat4("projection", projection);
             // skybox
@@ -1706,22 +1752,7 @@ namespace Advanced {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_texture);
             glDrawArrays(GL_TRIANGLES, 0, 36);
-            glDepthMask(GL_TRUE);
-
-            // draw scene as normal
-            shader.use();
-            model = glm::mat4(1.0f);
-            view = camera.getViewMatrix();
-            projection = glm::perspective(glm::radians(camera.zoom_), 640.0f / 480.0f, 0.1f, 100.0f); 
-            shader.setMat4("model", model);
-            shader.setMat4("view", view);
-            shader.setMat4("projection", projection);
-            //// cubes
-            //glBindVertexArray(cubeVAO);
-            //glActiveTexture(GL_TEXTURE0);
-            //glBindTexture(GL_TEXTURE_2D, cube_texture);
-            //glDrawArrays(GL_TRIANGLES, 0, 36);
-            //glBindVertexArray(0);
+            glDepthFunc(GL_LESS);
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             // -------------------------------------------------------------------------------
